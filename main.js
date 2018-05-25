@@ -46,8 +46,8 @@ ArrayCreator.prototype.countOfMines = function () {
                 }
                 // //adds +1 to right cell
                 if (this.boardArray[rowIndex][colIndex + 1] != "*" &&
-                    (this.boardArray[rowIndex][colIndex + 1] || 
-                    this.boardArray[rowIndex][colIndex + 1] == 0)) {
+                    (this.boardArray[rowIndex][colIndex + 1] ||
+                        this.boardArray[rowIndex][colIndex + 1] == 0)) {
                     this.boardArray[rowIndex][colIndex + 1] += 1;
                 }
                 //adds +1 to left cell
@@ -105,17 +105,17 @@ ArrayCreator.prototype.createBoard = function () {
 ArrayCreator.prototype.createCells = function (rowID) {
     // this.boardArray[0].forEach((col, colIndex) => 
     this.column.forEach((col, colIndex) => {
-    // for (this.cellID of rowID) {
-    //    console.log(colIndex)
+        // for (this.cellID of rowID) {
+        //    console.log(colIndex)
         this.displayCell = document.createElement("div");
         this.displayCell.classList.add("cell");
         this.displayCell.classList.add("hidden")
         this.displayRow.appendChild(this.displayCell);
         //adds text to div's
         this.newText = document.createTextNode(col)
-        this.displayCell.appendChild(this.newText) 
+        this.displayCell.appendChild(this.newText)
         //assigns data set used for flood fill detection and offsetting
-        this.displayCell.dataset.row = this.rowNumber; 
+        this.displayCell.dataset.row = this.rowNumber;
         this.displayCell.dataset.col = colIndex;
         //event listeners that remove/add classes 
         this.displayCell.addEventListener('click', this.removeHidden.bind(this))
@@ -125,7 +125,7 @@ ArrayCreator.prototype.createCells = function (rowID) {
 }
 
 // ArrayCreator.prototype.flood = function () {
-    
+
 //     console.log(event.target)
 //     // console.log(this.boardArray[])
 //     let row = this.targetCell.dataset.row
@@ -138,137 +138,130 @@ ArrayCreator.prototype.createCells = function (rowID) {
 
 
 ArrayCreator.prototype.addFlag = function () {
-    
-    // console.log(this.displayRow)
+
+
     this.targetCell = event.target
-    this.targetCell.classList.remove("hidden")
-    this.targetCell.classList.add("flag")
+
+    if (this.targetCell.classList.contains("hidden") && !this.targetCell.classList.contains("flag")) {
+        let flagArray = document.getElementsByClassName("flag")
+        let flagCount = flagArray.length
+        this.targetCell.classList.remove("hidden")
+        this.targetCell.classList.add("flag")
+        document.getElementById("flag").textContent = "Flag Count:" + (flagCount + 1)
+
+    } else if
+    (this.targetCell.classList.contains("flag")) {
+        let flagArray = document.getElementsByClassName("flag")
+        let flagCount = flagArray.length
+        this.targetCell.classList.remove("flag")
+        this.targetCell.classList.add("hidden")
+        document.getElementById("flag").textContent = "Flag Count:" + (flagCount - 1)
+    }
 }
 
 
 //flood fill time!
-
 ArrayCreator.prototype.removeHidden = function () {
-    
-    // console.log(event.target)
-    // console.log(this.boardArray[])
+
     this.targetCell = event.target
+    if(this.targetCell.classList.contains("flag")){
+        return;
+    }
     this.targetCell.classList.remove("hidden")
     let activeRow = parseInt(this.targetCell.dataset.row)
     let activeCol = parseInt(this.targetCell.dataset.col)
-    // console.log("this is row",activeRow)
-    // console.log("this is col",activeCol)
-    // console.log(this)
+
 
     //do math on the cell offset, then place into the doc.qSelector
-    console.log("this board array item",this.boardArray[activeRow][activeCol])
+    console.log("this board array item", this.boardArray[activeRow][activeCol])
     let rowBelow = parseInt(activeRow) + 1
     let rowAbove = parseInt(activeRow) - 1
     let colRight = parseInt(activeCol) + 1
-    let colLeft = parseInt(activeCol) -1
-    
-    
-    
+    let colLeft = parseInt(activeCol) - 1
+
+
     let queue = []
     queue.push(activeRow)
     queue.push(activeCol)
     console.log(queue)
-    //removes class below
-    while(queue.length > 0) {
-        
+   
+    while (queue.length > 0) {
+
         let queueRow = queue.shift()
         let queueCol = queue.shift()
 
-
         const currentCell = document.querySelector('[data-row="' + activeRow + '"][data-col="' + activeCol + '"]');
-        const belowCell = document.querySelector('[data-row="' + (queueRow+1) + '"][data-col="' + queueCol + '"]');
-        const aboveCell = document.querySelector('[data-row="' + (queueRow-1) + '"][data-col="' + queueCol + '"]');
-        const rightCell = document.querySelector('[data-row="' + queueRow+ '"][data-col="' + (queueCol+1) + '"]');
-        const leftCell = document.querySelector('[data-row="' + queueRow+ '"][data-col="' + (queueCol-1) + '"]');
+        const belowCell = document.querySelector('[data-row="' + (queueRow + 1) + '"][data-col="' + queueCol + '"]');
+        const aboveCell = document.querySelector('[data-row="' + (queueRow - 1) + '"][data-col="' + queueCol + '"]');
+        const rightCell = document.querySelector('[data-row="' + queueRow + '"][data-col="' + (queueCol + 1) + '"]');
+        const leftCell = document.querySelector('[data-row="' + queueRow + '"][data-col="' + (queueCol - 1) + '"]');
 
-            console.log("below",belowCell)
-            console.log("above",aboveCell)
-            // console.log("hi",this.boardArray[2][3].dataset.row)
-        if(this.boardArray[queueRow][queueCol] === 0){
+        console.log("below", belowCell)
+        console.log("above", aboveCell)
+        //if the number is clicked on is a 0, then do flood fill
+        if (this.boardArray[queueRow][queueCol] === 0) {
+                //reveals cell to right, then adds new coordinates to the array
+            if (rightCell && this.boardArray[queueRow][queueCol + 1] === 0 && rightCell.classList.contains("hidden")) {
+                rightCell.classList.remove("hidden")
+                queue.push(queueRow)
+                queue.push(queueCol + 1)
+            }
+            //reveals leftcell
+            if (leftCell && this.boardArray[queueRow][queueCol - 1] === 0 && leftCell.classList.contains("hidden")) {
+                leftCell.classList.remove("hidden")
+                queue.push(queueRow)
+                queue.push(queueCol - 1)
+            }
+            //reveals cell below
+            if (belowCell && this.boardArray[queueRow + 1][queueCol] === 0 && belowCell.classList.contains("hidden")) {
+                belowCell.classList.remove("hidden")
+                queue.push(queueRow + 1)
+                queue.push(queueCol)
+            }
+            //reveals class above
+            if (aboveCell && this.boardArray[queueRow - 1][queueCol] === 0 && aboveCell.classList.contains("hidden")) {
+                aboveCell.classList.remove("hidden")
+                queue.push(queueRow - 1)
+                queue.push(queueCol)
+            }
+            console.log(queue)
 
 
-            
-            // rightCell.classList.remove("hidden")
-            // leftCell.classList.remove("hidden")
-            // belowCell.classList.remove("hidden")
-            // aboveCell.classList.remove("hidden")
+            //reveals first number left/right, is diag necessary?
+            if (this.boardArray[queueRow][queueCol + 1] && this.boardArray[queueRow][queueCol + 1] !== "*") {
+                rightCell.classList.remove("hidden")
+            }
+            if (this.boardArray[queueRow][queueCol - 1] && this.boardArray[queueRow][queueCol - 1] !== "*") {
+                leftCell.classList.remove("hidden")
+            }
+            if (belowCell && this.boardArray[queueRow + 1][queueCol] !== "*") {
+                belowCell.classList.remove("hidden")
+            }
+            if (aboveCell && this.boardArray[queueRow - 1][queueCol] !== "*") {
+                aboveCell.classList.remove("hidden")
+            }
 
-    if(rightCell && this.boardArray[queueRow][queueCol+1] === 0 && rightCell.classList.contains("hidden")){
-        rightCell.classList.remove("hidden")
-       queue.push(queueRow)
-       queue.push(queueCol+1)
+        }
     }
-    //removes leftcell
-    if(leftCell && this.boardArray[queueRow][queueCol-1] === 0 && leftCell.classList.contains("hidden")){
-        leftCell.classList.remove("hidden")
-        queue.push(queueRow)
-        queue.push(queueCol-1)
-    }
-    //removes cell below
-    if( belowCell && this.boardArray[queueRow+1][queueCol] === 0 && belowCell.classList.contains("hidden")){
-        belowCell.classList.remove("hidden")
-        queue.push(queueRow+1)
-        queue.push(queueCol)
-    }
-    //removes class above
-    if(aboveCell && this.boardArray[queueRow-1][queueCol] === 0 && aboveCell.classList.contains("hidden")){
-        aboveCell.classList.remove("hidden")
-        queue.push(queueRow-1)
-        queue.push(queueCol)
-    }
-     console.log(queue)
-    
-    
-
-    if(this.boardArray[queueRow][queueCol+1] && this.boardArray[queueRow][queueCol+1] !=="*"){
-        rightCell.classList.remove("hidden")
-    }
-    if( this.boardArray[queueRow][queueCol-1] && this.boardArray[queueRow][queueCol-1] !=="*"){
-        leftCell.classList.remove("hidden")
-    }
-    if(belowCell && this.boardArray[queueRow+1][queueCol] !=="*"){
-        belowCell.classList.remove("hidden")
-    }
-    if(aboveCell && this.boardArray[queueRow-1][queueCol] !=="*"){
-        aboveCell.classList.remove("hidden")
-    }
-    
-}  
-}
 
     let lose = 0
     // lose detection
-    if(this.targetCell.innerHTML === "*"){
+    if (this.targetCell.innerHTML === "*") {
         alert("you lose, your name must be Jake")
         lose = 1
-    }
+        //need loop that looksfor all mines and reveals them
 
+    }
+    //mediocre win detection
     let hiddenCellCount = document.getElementsByClassName("hidden")
-    console.log(this.mineCount === hiddenCellCount.length )
-    if (this.mineCount === hiddenCellCount.length && lose !==1){
+    console.log(this.mineCount === hiddenCellCount.length)
+    if (this.mineCount === hiddenCellCount.length && lose !== 1) {
         alert("you win, your name must be anything but Jake")
     }
-lose = 0
-    
+    lose = 0
+
 }
 
-
-
-
-
-
-
-
-
-
-
-let board1 = new ArrayCreator(10, 5, 5);
-
-
+let board1 = new ArrayCreator(10, 8, 14);
 
 board1.mineLocations().countOfMines().createBoard()

@@ -23,6 +23,9 @@ h1  {
     background-color:dimgrey;
 }
 
-.flag {
+.flag.hidden {
     background-color:red;
+}
+.flag{
+    background-color: red
 }
