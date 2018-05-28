@@ -2,18 +2,20 @@
 
 let main = document.getElementById("main")
 
-
+//constructor? takes basic inputs and creates a nested array
 function ArrayCreator(width, height, mineCount) {
     this.col = width;
     this.row = height;
     this.mineCount = mineCount;
-    // this.rowLength = Array(10).join().split(",").map(() => 0);
-    //try to use Array(10).fill.map like below
-    // this.array = Array(height).fill().map(Array(width).fill(0))
+    this.flagCount = this.mineCount
+    //something like below will use .fill, not sure how it works yet
+    //this.boardArray = new Array(height).map(fill()(new Array(width).fill(0))
     this.boardArray = new Array(height).join().split(",").map(() =>
         new Array(width).join().split(",").map(() => 0));
+        
 }
-
+//places mines at random location, uses width and height input through this.col and this.row, prevents 
+//prevents two mines from going in same spot, only inputs mine into a 0 spot, doesn't stop until currentmine=totalmine
 ArrayCreator.prototype.mineLocations = function () {
     this.currentMineCount = 0
     do {
@@ -28,6 +30,7 @@ ArrayCreator.prototype.mineLocations = function () {
     return this;
 }
 
+//looks for cells with mines, adds +1 to all border cells
 ArrayCreator.prototype.countOfMines = function () {
 
     this.boardArray.forEach((row, rowIndex) => {
@@ -94,7 +97,8 @@ ArrayCreator.prototype.createBoard = function () {
         this.displayRow = document.createElement("div");
         this.displayRow.classList.add("row");
         main.appendChild(this.displayRow);
-
+        this.displayRow.style.height = 60/this.row + "vh"
+        this.displayRow.style.width = 90 + "%"
         //creates cells for each row
         this.createCells(rowID)
     })
@@ -106,10 +110,11 @@ ArrayCreator.prototype.createCells = function (rowID) {
     // this.boardArray[0].forEach((col, colIndex) => 
     this.column.forEach((col, colIndex) => {
         // for (this.cellID of rowID) {
-        //    console.log(colIndex)
         this.displayCell = document.createElement("div");
         this.displayCell.classList.add("cell");
         this.displayCell.classList.add("hidden")
+        this.displayCell.style.height = 55/this.row + "vh"
+        this.displayCell.style.width = 55/this.col + "vh"
         this.displayRow.appendChild(this.displayCell);
         //adds text to div's
         this.newText = document.createTextNode(col)
@@ -117,6 +122,8 @@ ArrayCreator.prototype.createCells = function (rowID) {
         //assigns data set used for flood fill detection and offsetting
         this.displayCell.dataset.row = this.rowNumber;
         this.displayCell.dataset.col = colIndex;
+
+        document.getElementById("flag").textContent = "Flags Remaining: " + this.flagCount
         //event listeners that remove/add classes 
         this.displayCell.addEventListener('click', this.removeHidden.bind(this))
         // this.displayCell.addEventListener('click', flood)
@@ -124,40 +131,29 @@ ArrayCreator.prototype.createCells = function (rowID) {
     })
 }
 
-// ArrayCreator.prototype.flood = function () {
-
-//     console.log(event.target)
-//     // console.log(this.boardArray[])
-//     let row = this.targetCell.dataset.row
-//     //lose detection
-//     // if(this.targetCell.innerHTML === "*"){
-//     //     alert("you must be named Jake")
-//     // }
-// }
-
-
-
 ArrayCreator.prototype.addFlag = function () {
-
-
+event.preventDefault();
+   
     this.targetCell = event.target
-
-    if (this.targetCell.classList.contains("hidden") && !this.targetCell.classList.contains("flag")) {
-        let flagArray = document.getElementsByClassName("flag")
-        let flagCount = flagArray.length
+    
+    
+    if (this.targetCell.classList.contains("hidden") && !this.targetCell.classList.contains("flag") && this.flagCount > 0) {
         this.targetCell.classList.remove("hidden")
         this.targetCell.classList.add("flag")
-        document.getElementById("flag").textContent = "Flag Count:" + (flagCount + 1)
-
+        this.flagCount--
+     
     } else if
+
     (this.targetCell.classList.contains("flag")) {
-        let flagArray = document.getElementsByClassName("flag")
-        let flagCount = flagArray.length
         this.targetCell.classList.remove("flag")
         this.targetCell.classList.add("hidden")
-        document.getElementById("flag").textContent = "Flag Count:" + (flagCount - 1)
+        this.flagCount++
+        
     }
+
+    document.getElementById("flag").textContent = "Flags Remaining: " + (this.flagCount)
 }
+
 
 
 //flood fill time!
@@ -195,6 +191,10 @@ ArrayCreator.prototype.removeHidden = function () {
         const aboveCell = document.querySelector('[data-row="' + (queueRow - 1) + '"][data-col="' + queueCol + '"]');
         const rightCell = document.querySelector('[data-row="' + queueRow + '"][data-col="' + (queueCol + 1) + '"]');
         const leftCell = document.querySelector('[data-row="' + queueRow + '"][data-col="' + (queueCol - 1) + '"]');
+        const upLeftCell = document.querySelector('[data-row="' + (queueRow-1) + '"][data-col="' + (queueCol - 1) + '"]')
+        const upRightCell = document.querySelector('[data-row="' + (queueRow-1) + '"][data-col="' + (queueCol + 1) + '"]')
+        const downRightCell = document.querySelector('[data-row="' + (queueRow+1) + '"][data-col="' + (queueCol + 1) + '"]')
+        const downLeftCell = document.querySelector('[data-row="' + (queueRow+1) + '"][data-col="' + (queueCol -1) + '"]')
 
         console.log("below", belowCell)
         console.log("above", aboveCell)
@@ -224,6 +224,8 @@ ArrayCreator.prototype.removeHidden = function () {
                 queue.push(queueRow - 1)
                 queue.push(queueCol)
             }
+            
+            
             console.log(queue)
 
 
@@ -240,6 +242,19 @@ ArrayCreator.prototype.removeHidden = function () {
             if (aboveCell && this.boardArray[queueRow - 1][queueCol] !== "*") {
                 aboveCell.classList.remove("hidden")
             }
+            if (aboveCell && this.boardArray[queueRow - 1][queueCol+1] && this.boardArray[queueRow - 1][queueCol+1] !== "*") {
+                upRightCell.classList.remove("hidden")
+            }
+            if (aboveCell && this.boardArray[queueRow - 1][queueCol-1] && this.boardArray[queueRow - 1][queueCol-1] !== "*") {
+                upLeftCell.classList.remove("hidden")
+            }
+            if (belowCell && this.boardArray[queueRow + 1][queueCol+1] && this.boardArray[queueRow + 1][queueCol+1] !== "*") {
+                downRightCell.classList.remove("hidden")
+            }
+            if (belowCell && this.boardArray[queueRow + 1][queueCol-1] && this.boardArray[queueRow + 1][queueCol-1] !== "*") {
+                downLeftCell.classList.remove("hidden")
+            }
+            
 
         }
     }
@@ -254,14 +269,15 @@ ArrayCreator.prototype.removeHidden = function () {
     }
     //mediocre win detection
     let hiddenCellCount = document.getElementsByClassName("hidden")
+    let flagCellCount = document.getElementsByClassName("flag")
     console.log(this.mineCount === hiddenCellCount.length)
-    if (this.mineCount === hiddenCellCount.length && lose !== 1) {
+    if (this.mineCount === (hiddenCellCount.length + flagCellCount.length) && lose !== 1) {
         alert("you win, your name must be anything but Jake")
     }
-    lose = 0
+    
 
 }
 
-let board1 = new ArrayCreator(10, 8, 14);
+let board1 = new ArrayCreator(10, 8, 10);
 
 board1.mineLocations().countOfMines().createBoard()

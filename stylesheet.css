@@ -1,21 +1,32 @@
 h1  {
     color:blue;
 }
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+main {
+    margin: 5px;
+}
 .row{
     border: 1pt solid black;
     width: 80%;
-    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: dimgray;
 }
 
 .cell{
     background-color: cyan;
-    width:25px;
-    height: 40px;
-    margin: 2px;
+    margin: 1px;
     text-align: center;
+    border: 1pt grey solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .cell.hidden {
@@ -27,5 +38,9 @@ h1  {
     background-color:red;
 }
 .flag{
-    background-color: red
+    background-color: red;
+}
+#reset {
+    width: 100px;
+    height: 50px;
 }
