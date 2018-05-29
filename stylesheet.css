@@ -42,10 +42,12 @@ main {
 
 .flag.hidden {
     background-color:red;
+    color: red;
     
 }
 .flag{
     background-color: red;
+    color: red;
     
 }
 .flag.mine{
