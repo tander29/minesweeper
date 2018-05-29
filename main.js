@@ -280,7 +280,7 @@ ArrayCreator.prototype.removeHidden = function () {
     let lose = 0
     // lose detection
     if (this.targetCell.innerHTML === "*") {
-        alert("you lose, your name must be Jake.  Your score is " + time + ", congrats?")
+        
         lose = 1
         startTime = false
         winOrLose = true
@@ -290,8 +290,11 @@ ArrayCreator.prototype.removeHidden = function () {
         for(let i = 0; i < revealMines.length; i++){
             console.log(revealMines[i])
             revealMines[i].textContent = "*"
+            
             revealMines[i].classList.remove("hidden")
+            revealMines[i].classList.add("reveal")
         }
+        alert("you lose, your name must be Jake.  Your score is " + time + ", congrats?")
     }
     //mediocre win detection
     let hiddenCellCount = document.getElementsByClassName("hidden")

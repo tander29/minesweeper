@@ -32,6 +32,7 @@ main {
 .cell.hidden.mine {
  
     background-color:dimgrey;
+    color: dimgrey
     
 }
 .cell.hidden {
@@ -56,6 +57,9 @@ main {
 }
 .mine {
     background-color: orange;
+}
+.cell.reveal.mine.flag{
+    background-color: blueviolet;
 }
 #reset {
     width: 100px;
