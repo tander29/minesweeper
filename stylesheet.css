@@ -29,21 +29,36 @@ main {
     align-items: center;
 }
 
+.cell.hidden.mine {
+ 
+    background-color:dimgrey;
+    
+}
 .cell.hidden {
  
     background-color:dimgrey;
-    color: dimgrey;
+    
 }
 
 .flag.hidden {
     background-color:red;
-    color: red;
+    
 }
 .flag{
     background-color: red;
-    color: red;
+    
+}
+.flag.mine{
+    background-color: red;
+    
+}
+.mine {
+    background-color: orange;
 }
 #reset {
     width: 100px;
     height: 50px;
+}
+button {
+    margin: 5px;
 }
