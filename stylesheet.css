@@ -32,13 +32,16 @@ main {
 .cell.hidden {
  
     background-color:dimgrey;
+    color: dimgrey;
 }
 
 .flag.hidden {
     background-color:red;
+    color: red;
 }
 .flag{
     background-color: red;
+    color: red;
 }
 #reset {
     width: 100px;
